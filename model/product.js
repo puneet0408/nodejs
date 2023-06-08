@@ -10,12 +10,21 @@ const productSchema = new Schema({
   price: {
     type: Number, min:[0,'wrong min discount']
   },
-  stock: {
-    type: Number,
+  discountPercentage:{
+      type:Number
+  },
+  rating:{
+    type:Number,min:[0,"wrong rating"],max:[5,"cross max limit"]
+  },
+  brand: {
+    type: String,
   },
   category: {
     type: String,
   },
+  thumbnail: {
+    type: String,
+  },
 });
 
-export const Product = mongoose.model('product',productSchema)
+export const Product = mongoose.model('Product',productSchema)

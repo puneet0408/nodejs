@@ -1,27 +1,17 @@
-import fs from "fs";
+import mongoose from "mongoose";
 import { Product } from "../model/product.js";
-import { log } from "console";
- 
-
 
 export const CreateProduct = (req, res) => {
   const product = new Product(req.body);
- product.save((err,doc)=>{
-  if(err)
-        {
-            return res.status(400).json(err);
-        }
-        else
-        {
-            return res.status(200).json(doc);
-        }
- })
-  
+  product
+    .save()
+    .then((doc) => res.status(200).json(doc))
+    .catch((err) => res.status(400).json(err));
 };
 
 export const GetAllProduct = async (req, res) => {
   const products = await Product.find();
-  res.json( products);
+  res.json(products);
 };
 
 export const GetProduct = async (req, res) => {
@@ -31,25 +21,44 @@ export const GetProduct = async (req, res) => {
   res.json(products);
 };
 
-export const ReplaceProduct = (req, res) => {
-  const id = +req.params.id;
-  const productindex = productDummy.findIndex((p) => p.id === id);
-  productDummy.splice(productindex, 1, { ...req.body, id: id });
-  res.status(201).json();
+export const ReplaceProduct = async (req, res) => {
+  const id = req.params.id;
+  try {
+    const doc = await Product.findOneAndReplace({ _id: id }, req.body, {
+      new: true,
+    });
+    res.status(201).json(doc);
+  } catch (err) {
+    res.status(400).json(err);
+  }
+  // const productindex = productDummy.findIndex((p) => p.id === id);
+  // productDummy.splice(productindex, 1, { ...req.body, id: id });
 };
 
-export const UpdateProduct = (req, res) => {
-  const id = +req.params.id;
-  const productindex = productDummy.findIndex((p) => p.id === id);
-  const product = productDummy[productindex];
-  productDummy.splice(productindex, 1, { ...product, ...req.body });
-  res.status(201).json();
+export const UpdateProduct = async (req, res) => {
+  const id = req.params.id;
+  try {
+    const doc = await Product.findOneAndUpdate({ _id: id }, req.body, {
+      new: true,
+    });
+    res.status(200).json(doc);
+  } catch (err) {
+    res.status(400).json(err);
+  }
+  // const productindex = productDummy.findIndex((p) => p.id === id);
+  // const product = productDummy[productindex];
+  // productDummy.splice(productindex, 1, { ...product, ...req.body });
 };
 
-export const DeleteProduct = (req, res) => {
-  const id = +req.params.id;
-  const productindex = productDummy.findIndex((p) => p.id === id);
-  const product = productDummy[productindex];
-  productDummy.splice(productindex, 1);
-  res.status(201).json(product);
+export const DeleteProduct = async (req, res) => {
+  const id = req.params.id;
+  try {
+    const doc = await Product.findOneAndDelete({ _id: id });
+    res.status(200).json(doc);
+  } catch (err) {
+    res.status(400).json(err);
+  }
+  // const productindex = productDummy.findIndex((p) => p.id === id);
+  // const product = productDummy[productindex];
+  // productDummy.splice(productindex, 1);
 };
